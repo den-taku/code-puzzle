@@ -1,7 +1,3 @@
-from hashlib import new
-import re
-
-
 class Bars:
     def __init__(self, string: str):
         self.array = []
@@ -25,31 +21,60 @@ class Bars:
         new_array = []
         for _ in range(0, l):
             new_array.append(' ')
-        # TODO: implement rule of 'I'
         for i in range(0, l):
-            if self.array[i - 1] == 'i' and self.array[i] == 'T' and self.array[(i + 1) % l] == 'i':
-                new_array[i] = 'i'
-            elif self.array[i - 1] == 'i' and self.array[i] == ' ' and self.array[(i + 1) % l] == 'i':
-                new_array[i] = ' '
-            elif self.array[i - 1] == 'i' and self.array[i] == 'T':
-                new_array[i] = ' '
-            elif self.array[i] == 'T' and self.array[(i + 1) % l] == 'i':
-                new_array[i] = ' '
-            elif self.array[i - 1] == 'i' and self.array[i] == ' ':
-                new_array[i] = 'i'
-            elif self.array[i] == ' ' and self.array[(i + 1) % l] == 'i':
-                new_array[i] = 'i'
-            elif self.array[i] == ' ':
-                new_array[i] = ' '
-            elif self.array[i] == 'i':
-                new_array[i] = 'T'
-            else:  # self.array[i] == 'T'
-                new_array[i] = 'i'
+            new_array[i] = self.decide_char(i, l)
         self.array = new_array
 
     def print(self):
         print(''.join(self.array))
 
+    def decide_char(self, index: int, length: int) -> str:
+        if index == length - 1:
+            list = [self.array[index - 1], self.array[index], self.array[0]]
+        elif index == 0:
+            list = [self.array[length - 1], self.array[0], self.array[1]]
+        else:
+            list = self.array[index-1:index+2]
 
-bs = Bars("I    IT ii  i I   I i   i   I  T")
-bs.print()
+        if list[0] == ' ':
+            if list[1] == ' ':
+                if list[2] == ' ' or list[2] == 'T':
+                    return ' '
+                else:
+                    return 'i'
+            elif list[1] == 'i' or list[1] == 'I':
+                if list[2] == ' ' or list[2] == 'T':
+                    return 'T'
+                else:
+                    return 'I'
+            elif list[1] == 'T':
+                if list[2] == ' ' or list[2] == 'T':
+                    return 'i'
+                else:
+                    return ' '
+        elif list[0] == 'i':
+            if list[1] == ' ':
+                if list[2] == ' ' or list[2] == 'T':
+                    return 'i'
+                else:
+                    return ' '
+            elif list[1] == 'i' or list[1] == 'I':
+                if list[2] == ' ' or list[2] == 'T':
+                    return 'I'
+                else:
+                    return 'T'
+            elif list[1] == 'T':
+                if list[2] == ' ' or list[2] == 'T':
+                    return ' '
+                else:
+                    return 'i'
+        else:
+            return ' '
+
+
+if __name__ == "__main__":
+    bs = Bars("I    IT ii  i I   I i   i   I  T")
+    for i in range(26):
+        bs.print()
+        bs.next()
+    bs.print()
